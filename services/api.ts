@@ -272,9 +272,9 @@ async function request<T>(
 
     try {
       tokens = await refreshTokensOnce();
-    } catch {
+    } catch (refreshError) {
       await handleUnauthorized();
-      throw error;
+      throw refreshError ?? error;
     }
 
     headers.Authorization = `Bearer ${tokens.accessToken}`;
