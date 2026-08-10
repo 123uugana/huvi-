@@ -16,6 +16,7 @@ import { LivestockCard } from '@/components/livestock/LivestockCard';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorView } from '@/components/ui/ErrorView';
 import { LoadingView } from '@/components/ui/LoadingView';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { getLivestock } from '@/services/livestock.api';
 import { getErrorMessage } from '@/utils/getErrorMessage';
 
@@ -23,9 +24,10 @@ export default function LivestockTabScreen() {
   const insets = useSafeAreaInsets();
   const [search, setSearch] = useState('');
   const normalizedSearch = useMemo(() => search.trim(), [search]);
+  const debouncedSearch = useDebouncedValue(normalizedSearch, 300);
   const livestockQuery = useQuery({
-    queryKey: ['livestock', { search: normalizedSearch }],
-    queryFn: () => getLivestock(normalizedSearch),
+    queryKey: ['livestock', { search: debouncedSearch }],
+    queryFn: () => getLivestock(debouncedSearch),
   });
   const livestock = livestockQuery.data?.data ?? [];
 
@@ -58,7 +60,12 @@ export default function LivestockTabScreen() {
           value={search}
         />
         {search ? (
-          <Pressable onPress={() => setSearch('')} style={styles.clearButton}>
+          <Pressable
+            accessibilityLabel="Хайлтыг цэвэрлэх"
+            accessibilityRole="button"
+            onPress={() => setSearch('')}
+            style={styles.clearButton}
+          >
             <Ionicons color="#8B806E" name="close-circle" size={20} />
           </Pressable>
         ) : null}
@@ -94,7 +101,7 @@ export default function LivestockTabScreen() {
             <EmptyState
               actionTitle="+ Мал бүртгэх"
               message={
-                normalizedSearch
+                debouncedSearch
                   ? 'Хайлтад тохирох мал олдсонгүй.'
                   : 'Одоогоор бүртгэлтэй мал алга.'
               }

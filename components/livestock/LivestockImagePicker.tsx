@@ -12,32 +12,41 @@ export function LivestockImagePicker({
   onChange,
 }: LivestockImagePickerProps) {
   async function pickImage() {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    try {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (!permission.granted) {
-      Alert.alert(
-        'Зөвшөөрөл шаардлагатай',
-        'Малын зураг сонгохын тулд зурагт хандах зөвшөөрөл өгнө үү.',
-      );
-      return;
-    }
+      if (!permission.granted) {
+        Alert.alert(
+          'Зөвшөөрөл шаардлагатай',
+          'Малын зураг сонгохын тулд зурагт хандах зөвшөөрөл өгнө үү.',
+        );
+        return;
+      }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-      mediaTypes: ['images'],
-      quality: 0.8,
-    });
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        aspect: [4, 3],
+        mediaTypes: ['images'],
+        quality: 0.8,
+      });
 
-    if (!result.canceled) {
-      onChange(result.assets[0]?.uri);
+      if (!result.canceled) {
+        onChange(result.assets[0]?.uri);
+      }
+    } catch {
+      Alert.alert('Алдаа', 'Зураг сонгох үед алдаа гарлаа. Дахин оролдоно уу.');
     }
   }
 
   return (
     <View style={styles.field}>
       <Text style={styles.label}>Зураг</Text>
-      <Pressable style={styles.picker} onPress={pickImage}>
+      <Pressable
+        accessibilityLabel="Малын зураг сонгох"
+        accessibilityRole="button"
+        style={styles.picker}
+        onPress={pickImage}
+      >
         {value ? (
           <Image source={{ uri: value }} style={styles.image} />
         ) : (
@@ -48,7 +57,11 @@ export function LivestockImagePicker({
         )}
       </Pressable>
       {value ? (
-        <Pressable style={styles.removeButton} onPress={() => onChange(undefined)}>
+        <Pressable
+          accessibilityRole="button"
+          style={styles.removeButton}
+          onPress={() => onChange(undefined)}
+        >
           <Text style={styles.removeText}>Зураг устгах</Text>
         </Pressable>
       ) : null}

@@ -32,9 +32,8 @@ export default function DashboardScreen() {
   const dashboard = dashboardQuery.data?.data;
   const missingLivestock = missingQuery.data?.data ?? [];
 
-  function handleRefresh() {
-    dashboardQuery.refetch();
-    missingQuery.refetch();
+  async function handleRefresh() {
+    await Promise.all([dashboardQuery.refetch(), missingQuery.refetch()]);
   }
 
   return (

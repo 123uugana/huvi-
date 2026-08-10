@@ -30,6 +30,12 @@
       "expo-secure-store",
       "expo-font",
       [
+        "expo-image-picker",
+        {
+          "photosPermission": "Малын зураг сонгохын тулд таны зургийн сан руу хандана."
+        }
+      ],
+      [
         "expo-notifications",
         {
           "color": "#6E5B3E",

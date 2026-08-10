@@ -5,7 +5,7 @@ import type {
   HttpMethod,
   QueryParams,
 } from '@/types/api';
-import { getAccessToken } from './tokenStorage';
+import { getAccessToken, getRefreshToken, saveTokens } from './tokenStorage';
 
 type RequestOptions = {
   body?: unknown;
@@ -14,8 +14,16 @@ type RequestOptions = {
   skipAuth?: boolean;
 };
 
+type TokenPair = {
+  accessToken: string;
+  refreshToken: string;
+};
+
+const AUTH_REFRESH_PATH = '/api/auth/refresh';
+
 let unauthorizedHandler: (() => void | Promise<void>) | undefined;
 let isHandlingUnauthorized = false;
+let refreshTokenPromise: Promise<TokenPair> | undefined;
 
 export function setUnauthorizedHandler(handler: () => void | Promise<void>) {
   unauthorizedHandler = handler;
@@ -107,6 +115,44 @@ function buildRequestBody(
   return JSON.stringify(body);
 }
 
+function isSuccessFalse(payload: unknown) {
+  return (
+    payload &&
+    typeof payload === 'object' &&
+    'success' in payload &&
+    (payload as { success?: unknown }).success === false
+  );
+}
+
+function extractTokenPair(
+  payload: unknown,
+  fallbackRefreshToken: string,
+): TokenPair | null {
+  const data =
+    payload && typeof payload === 'object' && 'data' in payload
+      ? (payload as { data?: unknown }).data
+      : payload;
+
+  if (!data || typeof data !== 'object') {
+    return null;
+  }
+
+  const tokenData = data as Partial<Record<keyof TokenPair, unknown>>;
+
+  if (
+    typeof tokenData.accessToken !== 'string' ||
+    (tokenData.refreshToken !== undefined &&
+      typeof tokenData.refreshToken !== 'string')
+  ) {
+    return null;
+  }
+
+  return {
+    accessToken: tokenData.accessToken,
+    refreshToken: tokenData.refreshToken ?? fallbackRefreshToken,
+  };
+}
+
 async function handleUnauthorized() {
   if (!unauthorizedHandler || isHandlingUnauthorized) {
     return;
@@ -119,6 +165,62 @@ async function handleUnauthorized() {
   } finally {
     isHandlingUnauthorized = false;
   }
+}
+
+async function requestTokenRefresh() {
+  const refreshToken = await getRefreshToken();
+
+  if (!refreshToken) {
+    throw createApiError(401, {
+      message: 'Нэвтрэх эрхийн хугацаа дууссан байна.',
+    });
+  }
+
+  let response: Response;
+
+  try {
+    response = await fetch(buildUrl(AUTH_REFRESH_PATH), {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refreshToken }),
+    });
+  } catch {
+    throw createApiError(0, {
+      message: 'Сервертэй холбогдож чадсангүй.',
+    });
+  }
+
+  const text = await response.text();
+  const payload = parseJson(text);
+
+  if (!response.ok || isSuccessFalse(payload)) {
+    throw createApiError(response.status, payload);
+  }
+
+  const tokens = extractTokenPair(payload, refreshToken);
+
+  if (!tokens) {
+    throw createApiError(0, {
+      message: 'Серверээс token шинэчлэх өгөгдөл буруу ирлээ.',
+      details: payload,
+    });
+  }
+
+  await saveTokens(tokens.accessToken, tokens.refreshToken);
+  return tokens;
+}
+
+async function refreshTokensOnce() {
+  if (!refreshTokenPromise) {
+    refreshTokenPromise = requestTokenRefresh().finally(() => {
+      refreshTokenPromise = undefined;
+    });
+  }
+
+  return refreshTokenPromise;
 }
 
 async function request<T>(
@@ -161,8 +263,37 @@ async function request<T>(
     });
   }
 
-  const text = await response.text();
-  const payload = parseJson(text);
+  let text = await response.text();
+  let payload = parseJson(text);
+
+  if (!options.skipAuth && response.status === 401) {
+    const error = createApiError(response.status, payload);
+    let tokens: TokenPair;
+
+    try {
+      tokens = await refreshTokensOnce();
+    } catch {
+      await handleUnauthorized();
+      throw error;
+    }
+
+    headers.Authorization = `Bearer ${tokens.accessToken}`;
+
+    try {
+      response = await fetch(buildUrl(path, options.query), {
+        method,
+        headers,
+        body,
+      });
+    } catch {
+      throw createApiError(0, {
+        message: 'Сервертэй холбогдож чадсангүй.',
+      });
+    }
+
+    text = await response.text();
+    payload = parseJson(text);
+  }
 
   if (!response.ok) {
     const error = createApiError(response.status, payload);
@@ -174,12 +305,7 @@ async function request<T>(
     throw error;
   }
 
-  if (
-    payload &&
-    typeof payload === 'object' &&
-    'success' in payload &&
-    (payload as { success?: unknown }).success === false
-  ) {
+  if (isSuccessFalse(payload)) {
     throw createApiError(response.status, payload);
   }
 
