@@ -1,0 +1,11 @@
+name = "hents-hurga-api"
+main = "worker/src/index.ts"
+compatibility_date = "2026-08-08"
+account_id = "4f092751ca31d58d93a619ad88dc4a2e"
+workers_dev = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hents-hurag"
+database_id = "f4060419-a12b-49db-994e-9ce9c2725686"
+migrations_dir = "drizzle"
