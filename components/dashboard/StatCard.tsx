@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { colors, radius } from '@/constants/theme';
 
 type StatCardProps = {
   label: string;
@@ -19,25 +20,25 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     minHeight: 106,
-    borderRadius: 8,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#E2D8C4',
-    backgroundColor: '#FFFDF7',
+    borderColor: colors.border,
+    backgroundColor: '#14213B',
     padding: 14,
     justifyContent: 'space-between',
   },
   warning: {
-    borderColor: '#D9B08A',
-    backgroundColor: '#FFF9EF',
+    borderColor: colors.warning,
+    backgroundColor: colors.warningSoft,
   },
   value: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 30,
     fontWeight: '800',
     letterSpacing: 0,
   },
   label: {
-    color: '#685E4E',
+    color: colors.textMuted,
     fontSize: 13,
     fontWeight: '700',
     lineHeight: 18,

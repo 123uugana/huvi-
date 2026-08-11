@@ -1,5 +1,6 @@
 import { Redirect, Stack, useSegments } from 'expo-router';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { colors } from '@/constants/theme';
 import { useAuthStore } from '@/store/auth.store';
 
 export default function AuthLayout() {
@@ -12,7 +13,7 @@ export default function AuthLayout() {
   if (isInitializing) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator color="#6E5B3E" />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
@@ -27,7 +28,7 @@ export default function AuthLayout() {
         <Stack
           screenOptions={{
             headerShown: false,
-            contentStyle: { backgroundColor: '#F6F3EA' },
+            contentStyle: { backgroundColor: colors.background },
           }}
         />
       );
@@ -40,7 +41,7 @@ export default function AuthLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: '#F6F3EA' },
+        contentStyle: { backgroundColor: colors.background },
       }}
     />
   );
@@ -51,6 +52,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F6F3EA',
+    backgroundColor: colors.background,
   },
 });

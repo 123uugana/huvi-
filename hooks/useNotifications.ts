@@ -3,6 +3,7 @@ import { router, type Href } from 'expo-router';
 import * as Notifications from 'expo-notifications';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
+import { colors } from '@/constants/theme';
 import { registerPushToken } from '@/services/notification.api';
 import { useAuthStore } from '@/store/auth.store';
 import type { NotificationData } from '@/types/notification';
@@ -42,7 +43,7 @@ async function ensureAndroidNotificationChannel() {
     name: 'Малын мэдэгдэл',
     importance: Notifications.AndroidImportance.MAX,
     vibrationPattern: [0, 250, 250, 250],
-    lightColor: '#6E5B3E',
+    lightColor: colors.primary,
   });
 }
 
@@ -114,7 +115,7 @@ export function useNotifications() {
   const isProfileComplete = useAuthStore((state) => state.isProfileComplete);
 
   useEffect(() => {
-    if (!isAuthenticated || !isProfileComplete) {
+    if (Platform.OS === 'web' || !isAuthenticated || !isProfileComplete) {
       return undefined;
     }
 

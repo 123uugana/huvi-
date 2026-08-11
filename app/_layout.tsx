@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { AppProviders } from '@/providers/AppProviders';
 import { useAuthStore } from '@/store/auth.store';
+import { colors } from '@/constants/theme';
 
 function RootNavigator() {
   const restoreSession = useAuthStore((state) => state.restoreSession);
@@ -18,15 +19,16 @@ function RootNavigator() {
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: '#F6F3EA' },
+          contentStyle: { backgroundColor: colors.background },
         }}
       >
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(admin)" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="livestock" />
       </Stack>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
     </>
   );
 }

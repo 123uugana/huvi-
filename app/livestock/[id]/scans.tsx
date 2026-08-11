@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorView } from '@/components/ui/ErrorView';
 import { LoadingView } from '@/components/ui/LoadingView';
+import { colors, radius } from '@/constants/theme';
 import { getLivestockScans } from '@/services/livestock.api';
 import { formatDateTime, formatTime } from '@/utils/formatDate';
 import { getErrorMessage } from '@/utils/getErrorMessage';
@@ -36,7 +37,7 @@ export default function LivestockScansScreen() {
       refreshControl={
         <RefreshControl
           refreshing={scansQuery.isRefetching}
-          tintColor="#6E5B3E"
+          tintColor={colors.primary}
           onRefresh={scansQuery.refetch}
         />
       }
@@ -83,41 +84,41 @@ export default function LivestockScansScreen() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#F6F3EA',
+    backgroundColor: colors.background,
     padding: 20,
   },
   eyebrow: {
-    color: '#6E5B3E',
+    color: colors.primary,
     fontSize: 13,
     fontWeight: '800',
     letterSpacing: 0,
     marginBottom: 4,
   },
   title: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 30,
     fontWeight: '800',
     letterSpacing: 0,
     marginBottom: 8,
   },
   description: {
-    color: '#5E5545',
+    color: colors.textMuted,
     fontSize: 15,
     lineHeight: 22,
     marginBottom: 16,
   },
   list: {
-    borderRadius: 8,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#E2D8C4',
-    backgroundColor: '#FFFDF7',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     paddingHorizontal: 16,
   },
   scanRow: {
     minHeight: 82,
     flexDirection: 'row',
     alignItems: 'center',
-    borderBottomColor: '#ECE2D0',
+    borderBottomColor: colors.borderSoft,
     borderBottomWidth: 1,
     paddingVertical: 14,
   },
@@ -126,12 +127,12 @@ const styles = StyleSheet.create({
     minHeight: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
-    backgroundColor: '#EFE4CF',
+    borderRadius: radius.sm,
+    backgroundColor: colors.surfaceSoft,
     marginRight: 12,
   },
   time: {
-    color: '#5A4A32',
+    color: colors.primary,
     fontSize: 13,
     fontWeight: '800',
   },
@@ -139,19 +140,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   reader: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '800',
     marginBottom: 4,
   },
   meta: {
-    color: '#655C4D',
+    color: colors.textMuted,
     fontSize: 13,
     lineHeight: 18,
     marginBottom: 4,
   },
   epc: {
-    color: '#8A806F',
+    color: colors.textSubtle,
     fontSize: 12,
     fontWeight: '700',
   },

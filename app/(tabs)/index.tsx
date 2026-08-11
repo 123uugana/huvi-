@@ -11,6 +11,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RecentActivityItem } from '@/components/dashboard/RecentActivityItem';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { AppButton } from '@/components/ui/AppButton';
+import { AppHeader } from '@/components/ui/AppHeader';
+import { colors, radius } from '@/constants/theme';
 import { getDashboard } from '@/services/dashboard.api';
 import { getMissingLivestock } from '@/services/reports.api';
 import { useAuthStore } from '@/store/auth.store';
@@ -45,18 +47,17 @@ export default function DashboardScreen() {
       refreshControl={
         <RefreshControl
           refreshing={dashboardQuery.isRefetching || missingQuery.isRefetching}
-          tintColor="#6E5B3E"
+          tintColor={colors.primary}
           onRefresh={handleRefresh}
         />
       }
       showsVerticalScrollIndicator={false}
     >
-      <Text style={styles.greeting}>Сайн байна уу,</Text>
-      <Text style={styles.title}>{user?.name ?? 'Малчин'}</Text>
+      <AppHeader />
 
       {dashboardQuery.isLoading ? (
         <View style={styles.statePanel}>
-          <ActivityIndicator color="#6E5B3E" />
+          <ActivityIndicator color={colors.primary} />
           <Text style={styles.stateText}>Мэдээлэл ачаалж байна...</Text>
         </View>
       ) : dashboardQuery.isError ? (
@@ -73,6 +74,18 @@ export default function DashboardScreen() {
         </View>
       ) : dashboard ? (
         <>
+          <View style={styles.alertCard}>
+            <View style={styles.alertIcon}>
+              <Text style={styles.alertIconText}>!</Text>
+            </View>
+            <View style={styles.alertContent}>
+              <Text style={styles.alertTitle}>Өнөөдрийн дутуу мал</Text>
+              <Text style={styles.alertCount}>{dashboard.missingCount}</Text>
+              <Text style={styles.alertMeta}>толгой</Text>
+            </View>
+            <AppButton title="Дэлгэрэнгүй" variant="secondary" />
+          </View>
+
           <View style={styles.grid}>
             <View style={styles.gridRow}>
               <StatCard label="Нийт мал" value={dashboard.totalLivestock} />
@@ -96,7 +109,7 @@ export default function DashboardScreen() {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Сүүлийн RFID бүртгэл</Text>
+            <Text style={styles.sectionTitle}>Сүүлийн уншилтууд</Text>
             {dashboard.recentScans.length > 0 ? (
               dashboard.recentScans.map((scan) => (
                 <RecentActivityItem key={scan.id} scan={scan} />
@@ -149,20 +162,55 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#F6F3EA',
+    backgroundColor: colors.background,
     paddingHorizontal: 20,
   },
-  greeting: {
-    color: '#6D6251',
-    fontSize: 16,
-    lineHeight: 22,
+  alertCard: {
+    minHeight: 104,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: '#8A2F55',
+    backgroundColor: '#321127',
+    padding: 14,
+    marginBottom: 14,
   },
-  title: {
-    color: '#242016',
-    fontSize: 32,
+  alertIcon: {
+    width: 38,
+    height: 38,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 19,
+    borderWidth: 1,
+    borderColor: '#FF99AA',
+    marginRight: 12,
+  },
+  alertIconText: {
+    color: '#FFB5BE',
+    fontSize: 20,
+    fontWeight: '800',
+  },
+  alertContent: {
+    flex: 1,
+  },
+  alertTitle: {
+    color: '#FFB5BE',
+    fontSize: 16,
+    fontWeight: '800',
+    lineHeight: 21,
+    marginBottom: 4,
+  },
+  alertCount: {
+    color: colors.text,
+    fontSize: 28,
     fontWeight: '800',
     letterSpacing: 0,
-    marginBottom: 22,
+  },
+  alertMeta: {
+    color: colors.textMuted,
+    fontSize: 12,
+    fontWeight: '700',
   },
   grid: {
     gap: 12,
@@ -173,16 +221,16 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   section: {
-    borderRadius: 8,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#E2D8C4',
-    backgroundColor: '#FFFDF7',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     paddingHorizontal: 16,
     paddingTop: 16,
     marginBottom: 16,
   },
   sectionTitle: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '800',
     marginBottom: 4,
@@ -191,27 +239,27 @@ const styles = StyleSheet.create({
     minHeight: 180,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#E2D8C4',
-    backgroundColor: '#FFFDF7',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     padding: 18,
     gap: 12,
   },
   stateTitle: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 17,
     fontWeight: '800',
     textAlign: 'center',
   },
   stateText: {
-    color: '#655C4D',
+    color: colors.textMuted,
     fontSize: 14,
     lineHeight: 20,
     textAlign: 'center',
   },
   emptyText: {
-    color: '#655C4D',
+    color: colors.textMuted,
     fontSize: 14,
     lineHeight: 20,
     paddingVertical: 16,
@@ -222,19 +270,19 @@ const styles = StyleSheet.create({
   },
   missingRow: {
     minHeight: 64,
-    borderBottomColor: '#ECE2D0',
+    borderBottomColor: colors.borderSoft,
     borderBottomWidth: 1,
     justifyContent: 'center',
     paddingVertical: 12,
   },
   missingTitle: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '800',
     marginBottom: 4,
   },
   missingMeta: {
-    color: '#6B6254',
+    color: colors.textMuted,
     fontSize: 13,
     lineHeight: 18,
   },

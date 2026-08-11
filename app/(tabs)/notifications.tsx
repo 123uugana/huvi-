@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { colors, radius } from '@/constants/theme';
 
 export default function NotificationsScreen() {
   const insets = useSafeAreaInsets();
@@ -20,31 +21,31 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F3EA',
+    backgroundColor: colors.background,
     paddingHorizontal: 20,
   },
   title: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 30,
     fontWeight: '800',
     letterSpacing: 0,
     marginBottom: 22,
   },
   panel: {
-    borderRadius: 8,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#E2D8C4',
-    backgroundColor: '#FFFDF7',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     padding: 18,
   },
   panelTitle: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '800',
     marginBottom: 8,
   },
   panelText: {
-    color: '#5E5545',
+    color: colors.textMuted,
     fontSize: 15,
     lineHeight: 22,
   },

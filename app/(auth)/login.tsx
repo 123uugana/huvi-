@@ -3,9 +3,11 @@ import { useMutation } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { AppButton } from '@/components/ui/AppButton';
 import { AppInput } from '@/components/ui/AppInput';
 import { ScreenContainer } from '@/components/ui/ScreenContainer';
+import { colors, radius } from '@/constants/theme';
 import {
   LoginFormValues,
   loginSchema,
@@ -47,10 +49,13 @@ export default function LoginScreen() {
   return (
     <ScreenContainer>
       <View style={styles.brandBlock}>
+        <View style={styles.logo}>
+          <Ionicons color={colors.primary} name="paw" size={42} />
+        </View>
         <Text style={styles.brand}>ХЭНЦ ХУРГА</Text>
-        <Text style={styles.title}>Мал сүргээ бүртгэлтэй удирдаарай</Text>
+        <Text style={styles.title}>Утасны дугаараа оруулна уу</Text>
         <Text style={styles.subtitle}>
-          Утасны дугаараа оруулаад баталгаажуулах код авна уу.
+          Таны бүртгэлтэй дугаар руу баталгаажуулах код илгээнэ.
         </Text>
       </View>
 
@@ -89,32 +94,47 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   brandBlock: {
+    alignItems: 'center',
     marginBottom: 30,
+    paddingTop: 32,
+  },
+  logo: {
+    width: 92,
+    height: 92,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 46,
+    borderWidth: 1,
+    borderColor: colors.primarySoft,
+    backgroundColor: colors.surface,
+    marginBottom: 18,
   },
   brand: {
-    color: '#6E5B3E',
+    color: colors.text,
     fontSize: 13,
     fontWeight: '800',
     letterSpacing: 0,
     marginBottom: 18,
   },
   title: {
-    color: '#242016',
-    fontSize: 33,
+    color: colors.text,
+    fontSize: 24,
     fontWeight: '800',
     letterSpacing: 0,
-    lineHeight: 40,
+    lineHeight: 30,
     marginBottom: 10,
+    textAlign: 'center',
   },
   subtitle: {
-    color: '#5E5545',
-    fontSize: 16,
-    lineHeight: 24,
+    color: colors.textMuted,
+    fontSize: 14,
+    lineHeight: 22,
+    textAlign: 'center',
   },
   panel: {
-    backgroundColor: '#FFFDF7',
-    borderColor: '#E2D8C4',
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.md,
     borderWidth: 1,
     padding: 18,
   },

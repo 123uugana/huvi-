@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { AppButton } from '@/components/ui/AppButton';
 import { AppInput } from '@/components/ui/AppInput';
 import { ScreenContainer } from '@/components/ui/ScreenContainer';
+import { colors, radius } from '@/constants/theme';
 import {
   ProfileSetupFormValues,
   profileSetupSchema,
@@ -68,14 +69,14 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   brand: {
-    color: '#6E5B3E',
+    color: colors.primary,
     fontSize: 13,
     fontWeight: '800',
     letterSpacing: 0,
     marginBottom: 18,
   },
   title: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 33,
     fontWeight: '800',
     letterSpacing: 0,
@@ -83,14 +84,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   subtitle: {
-    color: '#5E5545',
+    color: colors.textMuted,
     fontSize: 16,
     lineHeight: 24,
   },
   panel: {
-    backgroundColor: '#FFFDF7',
-    borderColor: '#E2D8C4',
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.md,
     borderWidth: 1,
     padding: 18,
   },

@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { colors, radius } from '@/constants/theme';
 import { AppButton } from './AppButton';
 
 type EmptyStateProps = {
@@ -23,15 +24,15 @@ const styles = StyleSheet.create({
     minHeight: 160,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
+    borderRadius: radius.sm,
     borderWidth: 1,
-    borderColor: '#E2D8C4',
-    backgroundColor: '#FFFDF7',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     padding: 18,
     gap: 12,
   },
   text: {
-    color: '#655C4D',
+    color: colors.textMuted,
     fontSize: 15,
     fontWeight: '700',
     lineHeight: 22,

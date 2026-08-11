@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { colors, radius } from '@/constants/theme';
 
 type LivestockImagePickerProps = {
   value?: string;
@@ -51,7 +52,7 @@ export function LivestockImagePicker({
           <Image source={{ uri: value }} style={styles.image} />
         ) : (
           <View style={styles.empty}>
-            <Ionicons color="#6E5B3E" name="image-outline" size={28} />
+            <Ionicons color={colors.primary} name="image-outline" size={28} />
             <Text style={styles.emptyText}>Зураг сонгох</Text>
           </View>
         )}
@@ -74,17 +75,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: {
-    color: '#4E4637',
+    color: colors.textMuted,
     fontSize: 14,
     fontWeight: '700',
     marginBottom: 8,
   },
   picker: {
     height: 180,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     borderWidth: 1,
-    borderColor: '#D8CAB1',
-    backgroundColor: '#F0E6D1',
+    borderColor: colors.border,
+    backgroundColor: colors.surfaceAlt,
     overflow: 'hidden',
   },
   image: {
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   emptyText: {
-    color: '#6E5B3E',
+    color: colors.primary,
     fontSize: 15,
     fontWeight: '800',
   },
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   removeText: {
-    color: '#B55442',
+    color: colors.danger,
     fontSize: 14,
     fontWeight: '800',
   },

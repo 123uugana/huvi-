@@ -1,5 +1,7 @@
 import { Link } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { colors, radius } from '@/constants/theme';
 import type { Livestock } from '@/types/livestock';
 import { formatDateTime } from '@/utils/formatDate';
 import { formatGender } from '@/utils/livestockLabels';
@@ -17,7 +19,7 @@ export function LivestockCard({ livestock }: LivestockCardProps) {
           {livestock.imageUrl ? (
             <Image source={{ uri: livestock.imageUrl }} style={styles.image} />
           ) : (
-            <Text style={styles.imageText}>{livestock.earNumber.slice(-3)}</Text>
+            <Ionicons color={colors.textMuted} name="paw" size={28} />
           )}
         </View>
         <View style={styles.body}>
@@ -29,9 +31,11 @@ export function LivestockCard({ livestock }: LivestockCardProps) {
             <LivestockStatusBadge status={livestock.status} />
           </View>
           <Text style={styles.meta}>
-            {formatGender(livestock.gender)} · RFID:{' '}
-            {livestock.rfidTag?.epc ? 'Холбогдсон' : 'Бүртгээгүй'}
+            {formatGender(livestock.gender)} · {livestock.color ?? 'Өнгө бүртгээгүй'}
           </Text>
+          <View style={styles.idPill}>
+            <Text style={styles.idText}>ID: {livestock.rfidTag?.epc ?? livestock.id}</Text>
+          </View>
           <Text style={styles.scan}>
             {livestock.lastScan
               ? `Сүүлд RFID уншигдсан: ${formatDateTime(livestock.lastScan.scannedAt)}`
@@ -47,10 +51,10 @@ const styles = StyleSheet.create({
   card: {
     minHeight: 128,
     flexDirection: 'row',
-    borderRadius: 8,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#E2D8C4',
-    backgroundColor: '#FFFDF7',
+    borderColor: colors.border,
+    backgroundColor: '#172440',
     padding: 12,
     marginBottom: 12,
   },
@@ -62,19 +66,14 @@ const styles = StyleSheet.create({
     height: 104,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
-    backgroundColor: '#E9DFC9',
+    borderRadius: radius.sm,
+    backgroundColor: colors.backgroundElevated,
     overflow: 'hidden',
     marginRight: 12,
   },
   image: {
     width: '100%',
     height: '100%',
-  },
-  imageText: {
-    color: '#6E5B3E',
-    fontSize: 24,
-    fontWeight: '800',
   },
   body: {
     flex: 1,
@@ -89,25 +88,38 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   earNumber: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '800',
     marginBottom: 2,
   },
   name: {
-    color: '#5E5545',
+    color: colors.textMuted,
     fontSize: 14,
     fontWeight: '700',
   },
   meta: {
-    color: '#4F4636',
+    color: colors.textMuted,
     fontSize: 13,
     fontWeight: '700',
     lineHeight: 18,
     marginBottom: 6,
   },
+  idPill: {
+    alignSelf: 'flex-start',
+    borderRadius: 999,
+    backgroundColor: colors.primarySoft,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    marginBottom: 6,
+  },
+  idText: {
+    color: colors.primary,
+    fontSize: 11,
+    fontWeight: '800',
+  },
   scan: {
-    color: '#756B5C',
+    color: colors.textSubtle,
     fontSize: 12,
     lineHeight: 17,
   },

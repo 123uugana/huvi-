@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { colors, radius } from '@/constants/theme';
 import { AppButton } from './AppButton';
 
 type ErrorViewProps = {
@@ -26,21 +27,21 @@ const styles = StyleSheet.create({
     minHeight: 180,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
+    borderRadius: radius.sm,
     borderWidth: 1,
-    borderColor: '#E2D8C4',
-    backgroundColor: '#FFFDF7',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     padding: 18,
     gap: 12,
   },
   title: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 17,
     fontWeight: '800',
     textAlign: 'center',
   },
   text: {
-    color: '#655C4D',
+    color: colors.textMuted,
     fontSize: 14,
     lineHeight: 20,
     textAlign: 'center',

@@ -5,6 +5,7 @@ import { LivestockForm } from '@/components/livestock/LivestockForm';
 import { ErrorView } from '@/components/ui/ErrorView';
 import { LoadingView } from '@/components/ui/LoadingView';
 import { ScreenContainer } from '@/components/ui/ScreenContainer';
+import { colors } from '@/constants/theme';
 import type { LivestockFormValues } from '@/schemas/livestock.schema';
 import {
   getLivestockDetail,
@@ -94,26 +95,26 @@ export default function EditLivestockScreen() {
 const styles = StyleSheet.create({
   stateWrap: {
     flex: 1,
-    backgroundColor: '#F6F3EA',
+    backgroundColor: colors.background,
     padding: 20,
     justifyContent: 'center',
   },
   eyebrow: {
-    color: '#6E5B3E',
+    color: colors.primary,
     fontSize: 13,
     fontWeight: '800',
     letterSpacing: 0,
     marginBottom: 4,
   },
   title: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 30,
     fontWeight: '800',
     letterSpacing: 0,
     marginBottom: 8,
   },
   description: {
-    color: '#5E5545',
+    color: colors.textMuted,
     fontSize: 15,
     lineHeight: 22,
     marginBottom: 16,

@@ -1,4 +1,5 @@
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { colors, radius } from '@/constants/theme';
 
 type LoadingViewProps = {
   message?: string;
@@ -9,7 +10,7 @@ export function LoadingView({
 }: LoadingViewProps) {
   return (
     <View style={styles.container}>
-      <ActivityIndicator color="#6E5B3E" />
+      <ActivityIndicator color={colors.primary} />
       <Text style={styles.text}>{message}</Text>
     </View>
   );
@@ -20,15 +21,15 @@ const styles = StyleSheet.create({
     minHeight: 180,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
+    borderRadius: radius.sm,
     borderWidth: 1,
-    borderColor: '#E2D8C4',
-    backgroundColor: '#FFFDF7',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     padding: 18,
     gap: 12,
   },
   text: {
-    color: '#655C4D',
+    color: colors.textMuted,
     fontSize: 14,
     lineHeight: 20,
     textAlign: 'center',

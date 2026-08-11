@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { colors, radius } from '@/constants/theme';
 import type { DashboardRecentScan } from '@/types/dashboard';
 import { formatDateTime, formatTime } from '@/utils/formatDate';
 
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
     minHeight: 70,
     flexDirection: 'row',
     alignItems: 'center',
-    borderBottomColor: '#ECE2D0',
+    borderBottomColor: colors.borderSoft,
     borderBottomWidth: 1,
     paddingVertical: 12,
   },
@@ -39,12 +40,12 @@ const styles = StyleSheet.create({
     minHeight: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
-    backgroundColor: '#EFE4CF',
+    borderRadius: radius.sm,
+    backgroundColor: colors.surfaceSoft,
     marginRight: 12,
   },
   time: {
-    color: '#5A4A32',
+    color: colors.primary,
     fontSize: 13,
     fontWeight: '800',
   },
@@ -52,13 +53,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '800',
     marginBottom: 4,
   },
   subtitle: {
-    color: '#6B6254',
+    color: colors.textMuted,
     fontSize: 13,
     lineHeight: 18,
   },

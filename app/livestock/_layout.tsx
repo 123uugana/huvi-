@@ -1,5 +1,6 @@
 import { Redirect, Stack } from 'expo-router';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { colors } from '@/constants/theme';
 import { useAuthStore } from '@/store/auth.store';
 
 export default function LivestockLayout() {
@@ -10,7 +11,7 @@ export default function LivestockLayout() {
   if (isInitializing) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator color="#6E5B3E" />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
@@ -26,14 +27,14 @@ export default function LivestockLayout() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: '#F6F3EA' },
+        headerStyle: { backgroundColor: colors.background },
         headerShadowVisible: false,
-        headerTintColor: '#242016',
+        headerTintColor: colors.text,
         headerTitleStyle: {
           fontSize: 18,
           fontWeight: '800',
         },
-        contentStyle: { backgroundColor: '#F6F3EA' },
+        contentStyle: { backgroundColor: colors.background },
       }}
     >
       <Stack.Screen name="create" options={{ title: 'Мал бүртгэх' }} />
@@ -49,6 +50,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F6F3EA',
+    backgroundColor: colors.background,
   },
 });

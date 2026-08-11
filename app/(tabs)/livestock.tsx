@@ -15,7 +15,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LivestockCard } from '@/components/livestock/LivestockCard';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorView } from '@/components/ui/ErrorView';
+import { AppHeader } from '@/components/ui/AppHeader';
 import { LoadingView } from '@/components/ui/LoadingView';
+import { colors, radius } from '@/constants/theme';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { getLivestock } from '@/services/livestock.api';
 import { getErrorMessage } from '@/utils/getErrorMessage';
@@ -33,28 +35,21 @@ export default function LivestockTabScreen() {
 
   return (
     <View style={[styles.screen, { paddingTop: insets.top + 18 }]}>
-      <View style={styles.header}>
-        <View style={styles.headerText}>
-          <Text style={styles.eyebrow}>Миний мал</Text>
-          <Text style={styles.title}>Малын жагсаалт</Text>
-        </View>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => router.push('/livestock/create')}
-          style={styles.addButton}
-        >
-          <Ionicons color="#FFFFFF" name="add" size={22} />
-        </Pressable>
+      <AppHeader />
+
+      <View style={styles.segmented}>
+        <Text style={[styles.segmentText, styles.segmentActive]}>Дутсан (5)</Text>
+        <Text style={styles.segmentText}>Ирсэн (1240)</Text>
       </View>
 
       <View style={styles.searchShell}>
-        <Ionicons color="#8B806E" name="search" size={20} />
+        <Ionicons color={colors.textSubtle} name="search" size={20} />
         <TextInput
           autoCapitalize="none"
           autoCorrect={false}
           onChangeText={setSearch}
           placeholder="Дугаар, нэр, RFID EPC хайх"
-          placeholderTextColor="#9A8F7D"
+          placeholderTextColor={colors.textSubtle}
           returnKeyType="search"
           style={styles.searchInput}
           value={search}
@@ -66,7 +61,7 @@ export default function LivestockTabScreen() {
             onPress={() => setSearch('')}
             style={styles.clearButton}
           >
-            <Ionicons color="#8B806E" name="close-circle" size={20} />
+            <Ionicons color={colors.textSubtle} name="close-circle" size={20} />
           </Pressable>
         ) : null}
       </View>
@@ -91,7 +86,7 @@ export default function LivestockTabScreen() {
           refreshControl={
             <RefreshControl
               refreshing={livestockQuery.isRefetching}
-              tintColor="#6E5B3E"
+              tintColor={colors.primary}
               onRefresh={livestockQuery.refetch}
             />
           }
@@ -117,56 +112,46 @@ export default function LivestockTabScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#F6F3EA',
+    backgroundColor: colors.background,
     paddingHorizontal: 20,
   },
-  header: {
-    minHeight: 58,
+  segmented: {
+    minHeight: 42,
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    gap: 16,
-    marginBottom: 16,
-  },
-  headerText: {
-    flex: 1,
-  },
-  eyebrow: {
-    color: '#6E5B3E',
-    fontSize: 13,
-    fontWeight: '800',
-    letterSpacing: 0,
-    marginBottom: 4,
-  },
-  title: {
-    color: '#242016',
-    fontSize: 28,
-    fontWeight: '800',
-    letterSpacing: 0,
-  },
-  addButton: {
-    width: 46,
-    height: 46,
     alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 8,
-    backgroundColor: '#6E5B3E',
+    justifyContent: 'space-around',
+    borderBottomColor: colors.borderSoft,
+    borderBottomWidth: 1,
+    marginBottom: 14,
+  },
+  segmentText: {
+    flex: 1,
+    color: colors.textMuted,
+    fontSize: 14,
+    fontWeight: '800',
+    lineHeight: 40,
+    textAlign: 'center',
+  },
+  segmentActive: {
+    color: colors.primary,
+    borderBottomColor: colors.primary,
+    borderBottomWidth: 2,
   },
   searchShell: {
     minHeight: 52,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: radius.sm,
     borderWidth: 1,
-    borderColor: '#D8CAB1',
-    backgroundColor: '#FFFDF7',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     paddingHorizontal: 14,
     marginBottom: 14,
   },
   searchInput: {
     flex: 1,
     minHeight: 50,
-    color: '#242016',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '700',
     marginLeft: 10,

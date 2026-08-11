@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LivestockStatusBadge } from '@/components/livestock/LivestockStatusBadge';
 import { ErrorView } from '@/components/ui/ErrorView';
 import { LoadingView } from '@/components/ui/LoadingView';
+import { colors, radius } from '@/constants/theme';
 import { getLivestockDetail } from '@/services/livestock.api';
 import { formatDateTime } from '@/utils/formatDate';
 import { getErrorMessage } from '@/utils/getErrorMessage';
@@ -57,7 +58,7 @@ export default function LivestockDetailScreen() {
       refreshControl={
         <RefreshControl
           refreshing={livestockQuery.isRefetching}
-          tintColor="#6E5B3E"
+          tintColor={colors.primary}
           onRefresh={livestockQuery.refetch}
         />
       }
@@ -106,7 +107,7 @@ export default function LivestockDetailScreen() {
 
       <View style={styles.section}>
         <View style={styles.rfidTitleRow}>
-          <Ionicons color="#6E5B3E" name="radio-outline" size={20} />
+          <Ionicons color={colors.primary} name="radio-outline" size={20} />
           <Text style={styles.sectionTitle}>RFID мэдээлэл</Text>
         </View>
         <InfoRow
@@ -138,19 +139,19 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 const styles = StyleSheet.create({
   stateWrap: {
     flex: 1,
-    backgroundColor: '#F6F3EA',
+    backgroundColor: colors.background,
     padding: 20,
     justifyContent: 'center',
   },
   container: {
     flexGrow: 1,
-    backgroundColor: '#F6F3EA',
+    backgroundColor: colors.background,
     padding: 20,
   },
   imageWrap: {
     height: 220,
-    borderRadius: 8,
-    backgroundColor: '#E9DFC9',
+    borderRadius: radius.md,
+    backgroundColor: colors.surfaceSoft,
     overflow: 'hidden',
     marginBottom: 18,
   },
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   imageText: {
-    color: '#6E5B3E',
+    color: colors.primary,
     fontSize: 30,
     fontWeight: '800',
   },
@@ -178,21 +179,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   eyebrow: {
-    color: '#6E5B3E',
+    color: colors.primary,
     fontSize: 13,
     fontWeight: '800',
     letterSpacing: 0,
     marginBottom: 4,
   },
   title: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 30,
     fontWeight: '800',
     letterSpacing: 0,
     marginBottom: 4,
   },
   name: {
-    color: '#5E5545',
+    color: colors.textMuted,
     fontSize: 16,
     fontWeight: '700',
   },
@@ -205,9 +206,9 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 48,
     overflow: 'hidden',
-    borderRadius: 8,
-    backgroundColor: '#6E5B3E',
-    color: '#FFFFFF',
+    borderRadius: radius.sm,
+    backgroundColor: colors.primary,
+    color: colors.background,
     fontSize: 16,
     fontWeight: '800',
     lineHeight: 48,
@@ -217,21 +218,21 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 48,
     overflow: 'hidden',
-    borderRadius: 8,
-    borderColor: '#D8CAB1',
+    borderRadius: radius.sm,
+    borderColor: colors.border,
     borderWidth: 1,
-    backgroundColor: '#FFFDF7',
-    color: '#6E5B3E',
+    backgroundColor: colors.surfaceAlt,
+    color: colors.primary,
     fontSize: 16,
     fontWeight: '800',
     lineHeight: 48,
     textAlign: 'center',
   },
   section: {
-    borderRadius: 8,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#E2D8C4',
-    backgroundColor: '#FFFDF7',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     paddingHorizontal: 16,
     marginBottom: 14,
   },
@@ -242,25 +243,25 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   sectionTitle: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '800',
   },
   infoRow: {
     minHeight: 58,
-    borderBottomColor: '#ECE2D0',
+    borderBottomColor: colors.borderSoft,
     borderBottomWidth: 1,
     justifyContent: 'center',
     paddingVertical: 10,
   },
   infoLabel: {
-    color: '#756B5C',
+    color: colors.textSubtle,
     fontSize: 13,
     fontWeight: '700',
     marginBottom: 4,
   },
   infoValue: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '800',
     lineHeight: 22,

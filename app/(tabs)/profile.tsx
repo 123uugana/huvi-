@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { colors, radius } from '@/constants/theme';
 import { cleanupNotifications } from '@/hooks/useNotifications';
 import { useAuthStore } from '@/store/auth.store';
 
@@ -39,32 +40,32 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F3EA',
+    backgroundColor: colors.background,
     paddingHorizontal: 20,
   },
   title: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 30,
     fontWeight: '800',
     letterSpacing: 0,
     marginBottom: 22,
   },
   panel: {
-    borderRadius: 8,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#E2D8C4',
-    backgroundColor: '#FFFDF7',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     padding: 18,
     marginBottom: 16,
   },
   label: {
-    color: '#746957',
+    color: colors.textSubtle,
     fontSize: 13,
     fontWeight: '700',
     marginBottom: 4,
   },
   value: {
-    color: '#242016',
+    color: colors.text,
     fontSize: 17,
     fontWeight: '700',
     marginBottom: 16,
@@ -73,11 +74,11 @@ const styles = StyleSheet.create({
     minHeight: 52,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
-    backgroundColor: '#6E5B3E',
+    borderRadius: radius.sm,
+    backgroundColor: colors.primary,
   },
   buttonText: {
-    color: '#FFFFFF',
+    color: colors.background,
     fontSize: 16,
     fontWeight: '800',
   },

@@ -7,6 +7,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { colors } from '@/constants/theme';
 
 type ScreenContainerProps = PropsWithChildren<{
   contentContainerStyle?: ViewStyle;
@@ -51,7 +52,7 @@ export function ScreenContainer({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F3EA',
+    backgroundColor: colors.background,
   },
   content: {
     flexGrow: 1,

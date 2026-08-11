@@ -3,6 +3,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { AppButton } from '@/components/ui/AppButton';
 import { AppInput } from '@/components/ui/AppInput';
+import { colors, radius } from '@/constants/theme';
 import {
   LivestockFormValues,
   livestockSchema,
@@ -200,17 +201,17 @@ export function LivestockForm({
 
 const styles = StyleSheet.create({
   panel: {
-    borderRadius: 8,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#E2D8C4',
-    backgroundColor: '#FFFDF7',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     padding: 16,
   },
   field: {
     marginBottom: 16,
   },
   label: {
-    color: '#4E4637',
+    color: colors.textMuted,
     fontSize: 14,
     fontWeight: '700',
     marginBottom: 8,
@@ -224,23 +225,23 @@ const styles = StyleSheet.create({
     minHeight: 46,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
+    borderRadius: radius.sm,
     borderWidth: 1,
-    borderColor: '#D8CAB1',
-    backgroundColor: '#FFFFFF',
+    borderColor: colors.border,
+    backgroundColor: colors.surfaceAlt,
     paddingHorizontal: 8,
   },
   segmentActive: {
-    borderColor: '#6E5B3E',
-    backgroundColor: '#EFE4CF',
+    borderColor: colors.primary,
+    backgroundColor: colors.primarySoft,
   },
   segmentText: {
-    color: '#6B6254',
+    color: colors.textMuted,
     fontSize: 14,
     fontWeight: '800',
     textAlign: 'center',
   },
   segmentTextActive: {
-    color: '#4A3D29',
+    color: colors.primary,
   },
 });

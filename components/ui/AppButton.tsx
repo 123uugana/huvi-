@@ -1,4 +1,5 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native';
+import { colors, radius } from '@/constants/theme';
 
 type AppButtonProps = {
   title: string;
@@ -31,7 +32,7 @@ export function AppButton({
       ]}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'primary' ? '#FFFFFF' : '#6E5B3E'} />
+        <ActivityIndicator color={variant === 'primary' ? colors.background : colors.primary} />
       ) : (
         <Text
           style={[
@@ -51,15 +52,15 @@ const styles = StyleSheet.create({
     minHeight: 54,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
+    borderRadius: radius.sm,
     paddingHorizontal: 18,
   },
   primary: {
-    backgroundColor: '#6E5B3E',
+    backgroundColor: colors.primary,
   },
   secondary: {
-    backgroundColor: '#FFFDF7',
-    borderColor: '#D8CAB1',
+    backgroundColor: colors.surfaceAlt,
+    borderColor: colors.border,
     borderWidth: 1,
   },
   disabled: {
@@ -74,9 +75,9 @@ const styles = StyleSheet.create({
     letterSpacing: 0,
   },
   primaryText: {
-    color: '#FFFFFF',
+    color: colors.background,
   },
   secondaryText: {
-    color: '#6E5B3E',
+    color: colors.primary,
   },
 });

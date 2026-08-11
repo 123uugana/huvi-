@@ -6,6 +6,7 @@ import {
   TextInputProps,
   View,
 } from 'react-native';
+import { colors, radius } from '@/constants/theme';
 
 type AppInputProps = TextInputProps & {
   label: string;
@@ -28,7 +29,7 @@ export const AppInput = forwardRef<TextInput, AppInputProps>(
         <TextInput
           multiline={multiline}
           ref={ref}
-          placeholderTextColor="#9A8F7D"
+          placeholderTextColor={colors.textSubtle}
           style={[styles.input, multiline ? styles.multilineInput : undefined, style]}
           {...props}
         />
@@ -45,23 +46,23 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: {
-    color: '#4E4637',
+    color: colors.textMuted,
     fontSize: 14,
     fontWeight: '700',
     marginBottom: 8,
   },
   inputShell: {
     minHeight: 54,
-    borderColor: '#D8CAB1',
-    borderRadius: 8,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
     borderWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 14,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surfaceAlt,
   },
   inputError: {
-    borderColor: '#B55442',
+    borderColor: colors.danger,
   },
   multilineShell: {
     minHeight: 96,
@@ -69,13 +70,13 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   prefix: {
-    color: '#766D5E',
+    color: colors.textSubtle,
     fontSize: 16,
     marginRight: 12,
   },
   input: {
     flex: 1,
-    color: '#242016',
+    color: colors.text,
     fontSize: 17,
     fontWeight: '700',
     minHeight: 52,
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   error: {
-    color: '#B55442',
+    color: colors.danger,
     fontSize: 13,
     fontWeight: '700',
     marginTop: 6,

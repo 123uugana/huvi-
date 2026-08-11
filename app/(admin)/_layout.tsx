@@ -13,7 +13,7 @@ function tabIcon(name: TabIconName) {
   };
 }
 
-export default function TabsLayout() {
+export default function AdminLayout() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isInitializing = useAuthStore((state) => state.isInitializing);
   const isProfileComplete = useAuthStore((state) => state.isProfileComplete);
@@ -35,8 +35,8 @@ export default function TabsLayout() {
     return <Redirect href="/(auth)/profile-setup" />;
   }
 
-  if (user?.role === 'ADMIN') {
-    return <Redirect href="/(admin)" />;
+  if (user?.role !== 'ADMIN') {
+    return <Redirect href="/(tabs)" />;
   }
 
   return (
@@ -53,30 +53,8 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Нүүр',
-          tabBarIcon: tabIcon('home-outline'),
-        }}
-      />
-      <Tabs.Screen
-        name="livestock"
-        options={{
-          title: 'Тооллого',
-          tabBarIcon: tabIcon('file-tray-full-outline'),
-        }}
-      />
-      <Tabs.Screen
-        name="notifications"
-        options={{
-          title: 'Мэдэгдэл',
-          tabBarIcon: tabIcon('notifications-outline'),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Профайл',
-          href: null,
-          tabBarIcon: tabIcon('person-outline'),
+          title: 'Хянах',
+          tabBarIcon: tabIcon('grid-outline'),
         }}
       />
     </Tabs>

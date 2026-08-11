@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { colors, radius } from '@/constants/theme';
 import type { LivestockStatus } from '@/types/livestock';
 import { formatStatus } from '@/utils/livestockLabels';
 
@@ -9,7 +10,9 @@ type LivestockStatusBadgeProps = {
 export function LivestockStatusBadge({ status }: LivestockStatusBadgeProps) {
   return (
     <View style={[styles.badge, status === 'MISSING' ? styles.warning : undefined]}>
-      <Text style={styles.text}>{formatStatus(status)}</Text>
+      <Text style={[styles.text, status === 'MISSING' ? styles.warningText : undefined]}>
+        {formatStatus(status)}
+      </Text>
     </View>
   );
 }
@@ -20,16 +23,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'flex-start',
-    borderRadius: 8,
+    borderRadius: radius.sm,
     paddingHorizontal: 10,
-    backgroundColor: '#E9F0DF',
+    backgroundColor: colors.successSoft,
   },
   warning: {
-    backgroundColor: '#F8E6D7',
+    backgroundColor: colors.dangerSoft,
   },
   text: {
-    color: '#4F5038',
+    color: colors.success,
     fontSize: 12,
     fontWeight: '800',
+  },
+  warningText: {
+    color: colors.danger,
   },
 });
