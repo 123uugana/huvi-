@@ -61,7 +61,7 @@ export default function OtpScreen() {
     <ScreenContainer>
       <View style={styles.brandBlock}>
         <Text style={styles.brand}>Баталгаажуулах</Text>
-        <Text style={styles.title}>Баталгаажуулах код jnrfgrgfurgbu</Text>
+        <Text style={styles.title}>Баталгаажуулах код</Text>
         <Text style={styles.subtitle}>
           {resolvedPhoneNumber
             ? `+976 ${resolvedPhoneNumber} дугаарт илгээсэн 6 оронтой кодыг оруулна уу.`
