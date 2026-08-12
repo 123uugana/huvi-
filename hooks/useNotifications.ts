@@ -147,6 +147,10 @@ export function useNotifications() {
 }
 
 export async function cleanupNotifications() {
+  if (Platform.OS === 'web') {
+    return;
+  }
+
   await Promise.all([
     Notifications.dismissAllNotificationsAsync(),
     Notifications.setBadgeCountAsync(0),
