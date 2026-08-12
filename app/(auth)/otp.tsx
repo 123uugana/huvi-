@@ -26,7 +26,7 @@ export default function OtpScreen() {
     setError,
   } = useForm<OtpFormValues>({
     defaultValues: {
-      code: '',
+      code: "",
     },
     resolver: zodResolver(otpSchema),
   });
@@ -34,7 +34,7 @@ export default function OtpScreen() {
   const verifyOtpMutation = useMutation({
     mutationFn: (code: string) => {
       if (!resolvedPhoneNumber) {
-        throw new Error('Утасны дугаар олдсонгүй.');
+        throw new Error("Утасны дугаар олдсонгүй.");
       }
 
       return verifyOtp(resolvedPhoneNumber, code);
@@ -48,11 +48,11 @@ export default function OtpScreen() {
 
       router.replace(
         response.data.requiresProfileSetup
-          ? '/(auth)/profile-setup'
-          : '/(tabs)',
+          ? "/(auth)/profile-setup"
+          : "/(tabs)",
       );
     } catch (error) {
-      setError('code', {
+      setError("code", {
         message: getErrorMessage(error),
       });
     }
@@ -66,7 +66,7 @@ export default function OtpScreen() {
         <Text style={styles.subtitle}>
           {resolvedPhoneNumber
             ? `+976 ${resolvedPhoneNumber} дугаарт илгээсэн 6 оронтой кодыг оруулна уу.`
-            : 'Утасны дугаар олдсонгүй. Нэвтрэх дэлгэц рүү буцна уу.'}
+            : "Утасны дугаар олдсонгүй. Нэвтрэх дэлгэц рүү буцна уу."}
         </Text>
       </View>
 
@@ -81,7 +81,7 @@ export default function OtpScreen() {
               label="Баталгаажуулах код"
               maxLength={6}
               onBlur={onBlur}
-              onChangeText={(text) => onChange(text.replace(/\D/g, ''))}
+              onChangeText={(text) => onChange(text.replace(/\D/g, ""))}
               placeholder="000000"
               returnKeyType="done"
               textContentType="oneTimeCode"
@@ -112,14 +112,14 @@ const styles = StyleSheet.create({
   brand: {
     color: colors.primary,
     fontSize: 13,
-    fontWeight: '800',
+    fontWeight: "800",
     letterSpacing: 0,
     marginBottom: 18,
   },
   title: {
     color: colors.text,
     fontSize: 33,
-    fontWeight: '800',
+    fontWeight: "800",
     letterSpacing: 0,
     lineHeight: 40,
     marginBottom: 10,
@@ -140,6 +140,6 @@ const styles = StyleSheet.create({
   link: {
     color: colors.primary,
     fontSize: 16,
-    fontWeight: '800',
+    fontWeight: "800",
   },
 });
