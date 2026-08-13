@@ -23,6 +23,7 @@ export const otpCodes = sqliteTable(
     code: text('code').notNull(),
     expiresAt: text('expires_at').notNull(),
     consumedAt: text('consumed_at'),
+    attemptCount: integer('attempt_count').notNull().default(0),
     createdAt: text('created_at').notNull(),
   },
   (table) => ({
@@ -134,6 +135,30 @@ export const rfidScans = sqliteTable(
   (table) => ({
     livestockIdIdx: index('rfid_scans_livestock_id_idx').on(table.livestockId),
     scannedAtIdx: index('rfid_scans_scanned_at_idx').on(table.scannedAt),
+  }),
+);
+
+export const alerts = sqliteTable(
+  'alerts',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    livestockId: text('livestock_id').references(() => livestock.id, {
+      onDelete: 'set null',
+    }),
+    type: text('type', { enum: ['MISSING', 'FOUND', 'SYSTEM'] })
+      .notNull()
+      .default('SYSTEM'),
+    title: text('title').notNull(),
+    message: text('message').notNull(),
+    isRead: integer('is_read', { mode: 'boolean' }).notNull().default(false),
+    createdAt: text('created_at').notNull(),
+  },
+  (table) => ({
+    userIdIdx: index('alerts_user_id_idx').on(table.userId),
+    userIdReadIdx: index('alerts_user_read_idx').on(table.userId, table.isRead),
   }),
 );
 

@@ -1,3 +1,11 @@
 ACCESS_TOKEN_SECRET=replace-with-a-long-random-secret
-OTP_CODE=123456
+SMS_PROVIDER=log
 EXPOSE_OTP=true
+
+# Optional for deterministic local testing. Remove it to use random OTP codes.
+OTP_CODE=123456
+
+# Required only when SMS_PROVIDER=twilio
+TWILIO_ACCOUNT_SID=
+TWILIO_AUTH_TOKEN=
+TWILIO_FROM_NUMBER=
