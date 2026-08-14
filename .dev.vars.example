@@ -6,7 +6,7 @@ EXPOSE_OTP=true
 # EXPOSE_OTP=true and is ignored in production. Never set it in deployed envs.
 OTP_CODE=123456
 
-# Required only when SMS_PROVIDER=twilio
-TWILIO_ACCOUNT_SID=
-TWILIO_AUTH_TOKEN=
-TWILIO_FROM_NUMBER=
+# Required only when SMS_PROVIDER=infobip
+INFOBIP_BASE_URL=y4jm3g.api.infobip.com
+INFOBIP_API_KEY=
+INFOBIP_SENDER=HentsHurga

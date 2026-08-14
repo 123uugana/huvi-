@@ -24,17 +24,18 @@ npx wrangler secret put ACCESS_TOKEN_SECRET
 ## SMS OTP
 
 Local development uses `SMS_PROVIDER=log`, which prints the OTP code in the
-Worker console. Production can send real SMS through Twilio:
+Worker console. Production can send real SMS through Infobip:
 
 ```bash
 npx wrangler secret put SMS_PROVIDER
-npx wrangler secret put TWILIO_ACCOUNT_SID
-npx wrangler secret put TWILIO_AUTH_TOKEN
-npx wrangler secret put TWILIO_FROM_NUMBER
+npx wrangler secret put INFOBIP_BASE_URL
+npx wrangler secret put INFOBIP_API_KEY
+npx wrangler secret put INFOBIP_SENDER
 ```
 
-Use `twilio` as the `SMS_PROVIDER` value. The phone number entered in the app is
-treated as an 8 digit Mongolian number and sent as `+976XXXXXXXX`.
+Use `infobip` as the `SMS_PROVIDER` value. The phone number entered in the app is
+treated as an 8 digit Mongolian number and sent as `976XXXXXXXX` (Infobip
+destinations must not contain the leading `+`).
 
 If `SMS_PROVIDER` is not configured, `/api/auth/send-otp` fails instead of
 pretending the message was sent.

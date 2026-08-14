@@ -20,10 +20,10 @@ type Env = {
   ACCESS_TOKEN_SECRET?: string;
   OTP_CODE?: string;
   EXPOSE_OTP?: string;
-  SMS_PROVIDER?: 'log' | 'twilio';
-  TWILIO_ACCOUNT_SID?: string;
-  TWILIO_AUTH_TOKEN?: string;
-  TWILIO_FROM_NUMBER?: string;
+  SMS_PROVIDER?: 'log' | 'infobip';
+  INFOBIP_BASE_URL?: string;
+  INFOBIP_API_KEY?: string;
+  INFOBIP_SENDER?: string;
 };
 
 type AuthUser = {
@@ -237,12 +237,8 @@ function accessTokenSecret(env: Env) {
   return secret;
 }
 
-function formatMongolianPhoneNumber(phoneNumber: string) {
-  return `+976${phoneNumber}`;
-}
-
 function smsProvider(env: Env) {
-  if (env.SMS_PROVIDER === 'log' || env.SMS_PROVIDER === 'twilio') {
+  if (env.SMS_PROVIDER === 'log' || env.SMS_PROVIDER === 'infobip') {
     return env.SMS_PROVIDER;
   }
 
@@ -253,8 +249,11 @@ function smsProvider(env: Env) {
   );
 }
 
-async function sendTwilioSms(env: Env, to: string, body: string) {
-  if (!env.TWILIO_ACCOUNT_SID || !env.TWILIO_AUTH_TOKEN || !env.TWILIO_FROM_NUMBER) {
+async function sendInfobipSms(env: Env, to: string, body: string) {
+  const apiKey = env.INFOBIP_API_KEY;
+  const baseUrl = env.INFOBIP_BASE_URL;
+
+  if (!apiKey || !baseUrl) {
     throw new ApiFailure(
       500,
       'SMS тохиргоо дутуу байна.',
@@ -262,41 +261,40 @@ async function sendTwilioSms(env: Env, to: string, body: string) {
     );
   }
 
-  const payload = new URLSearchParams({
-    To: to,
-    From: env.TWILIO_FROM_NUMBER,
-    Body: body,
-  });
-  const credentials = btoa(`${env.TWILIO_ACCOUNT_SID}:${env.TWILIO_AUTH_TOKEN}`);
-  const response = await fetch(
-    `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Messages.json`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Basic ${credentials}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: payload,
+  const response = await fetch(`https://${baseUrl}/sms/2/text/advanced`, {
+    method: 'POST',
+    headers: {
+      Authorization: `App ${apiKey}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
     },
-  );
+    body: JSON.stringify({
+      messages: [
+        {
+          from: env.INFOBIP_SENDER ?? 'HentsHurga',
+          destinations: [{ to }],
+          text: body,
+        },
+      ],
+    }),
+  });
 
   if (!response.ok) {
     const details = await response.text();
-    console.error('Twilio SMS failed', response.status, details);
+    console.error('Infobip SMS failed', response.status, details);
     throw new ApiFailure(502, 'SMS илгээж чадсангүй.', 'SMS_SEND_FAILED');
   }
 }
 
 async function sendOtpSms(env: Env, phoneNumber: string, code: string) {
-  const to = formatMongolianPhoneNumber(phoneNumber);
   const body = `Хэнц Хурга баталгаажуулах код: ${code}. Код 10 минут хүчинтэй.`;
 
-  if (smsProvider(env) === 'twilio') {
-    await sendTwilioSms(env, to, body);
+  if (smsProvider(env) === 'infobip') {
+    await sendInfobipSms(env, `976${phoneNumber}`, body);
     return;
   }
 
-  console.info(`OTP code for ${to}: ${code}`);
+  console.info(`OTP code for +976${phoneNumber}: ${code}`);
 }
 
 async function createAccessToken(env: Env, userId: string) {
