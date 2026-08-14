@@ -2,8 +2,8 @@ ACCESS_TOKEN_SECRET=replace-with-a-long-random-secret
 SMS_PROVIDER=log
 EXPOSE_OTP=true
 
-# DEV-ONLY: deterministic OTP code for local testing. It is only honored when
-# EXPOSE_OTP=true and is ignored in production. Never set it in deployed envs.
+# DEV-ONLY: deterministic OTP code for log-mode tests. Real SMS providers always
+# generate a fresh code. Never set EXPOSE_OTP=true in deployed envs.
 OTP_CODE=123456
 
 # Required only when SMS_PROVIDER=infobip

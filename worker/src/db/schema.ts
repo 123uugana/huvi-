@@ -10,9 +10,9 @@ export const users = sqliteTable(
     createdAt: text('created_at').notNull(),
     updatedAt: text('updated_at').notNull(),
   },
-  (table) => ({
-    phoneNumberIdx: uniqueIndex('users_phone_number_idx').on(table.phoneNumber),
-  }),
+  (table) => [
+    uniqueIndex('users_phone_number_idx').on(table.phoneNumber),
+  ],
 );
 
 export const otpCodes = sqliteTable(
@@ -26,9 +26,9 @@ export const otpCodes = sqliteTable(
     attemptCount: integer('attempt_count').notNull().default(0),
     createdAt: text('created_at').notNull(),
   },
-  (table) => ({
-    phoneNumberIdx: index('otp_codes_phone_number_idx').on(table.phoneNumber),
-  }),
+  (table) => [
+    index('otp_codes_phone_number_idx').on(table.phoneNumber),
+  ],
 );
 
 export const refreshSessions = sqliteTable(
@@ -43,12 +43,12 @@ export const refreshSessions = sqliteTable(
     revokedAt: text('revoked_at'),
     createdAt: text('created_at').notNull(),
   },
-  (table) => ({
-    refreshTokenHashIdx: uniqueIndex('refresh_sessions_token_idx').on(
+  (table) => [
+    uniqueIndex('refresh_sessions_token_idx').on(
       table.refreshTokenHash,
     ),
-    userIdIdx: index('refresh_sessions_user_id_idx').on(table.userId),
-  }),
+    index('refresh_sessions_user_id_idx').on(table.userId),
+  ],
 );
 
 export const livestock = sqliteTable(
@@ -73,14 +73,14 @@ export const livestock = sqliteTable(
     createdAt: text('created_at').notNull(),
     updatedAt: text('updated_at').notNull(),
   },
-  (table) => ({
-    userEarNumberIdx: uniqueIndex('livestock_user_ear_number_idx').on(
+  (table) => [
+    uniqueIndex('livestock_user_ear_number_idx').on(
       table.userId,
       table.earNumber,
     ),
-    userIdIdx: index('livestock_user_id_idx').on(table.userId),
-    statusIdx: index('livestock_status_idx').on(table.status),
-  }),
+    index('livestock_user_id_idx').on(table.userId),
+    index('livestock_status_idx').on(table.status),
+  ],
 );
 
 export const rfidTags = sqliteTable(
@@ -97,10 +97,10 @@ export const rfidTags = sqliteTable(
     createdAt: text('created_at').notNull(),
     updatedAt: text('updated_at').notNull(),
   },
-  (table) => ({
-    userEpcIdx: uniqueIndex('rfid_tags_user_epc_idx').on(table.userId, table.epc),
-    livestockIdIdx: uniqueIndex('rfid_tags_livestock_id_idx').on(table.livestockId),
-  }),
+  (table) => [
+    uniqueIndex('rfid_tags_user_epc_idx').on(table.userId, table.epc),
+    uniqueIndex('rfid_tags_livestock_id_idx').on(table.livestockId),
+  ],
 );
 
 export const rfidReaders = sqliteTable('rfid_readers', {
@@ -132,10 +132,10 @@ export const rfidScans = sqliteTable(
       .default('UNKNOWN'),
     scannedAt: text('scanned_at').notNull(),
   },
-  (table) => ({
-    livestockIdIdx: index('rfid_scans_livestock_id_idx').on(table.livestockId),
-    scannedAtIdx: index('rfid_scans_scanned_at_idx').on(table.scannedAt),
-  }),
+  (table) => [
+    index('rfid_scans_livestock_id_idx').on(table.livestockId),
+    index('rfid_scans_scanned_at_idx').on(table.scannedAt),
+  ],
 );
 
 export const alerts = sqliteTable(
@@ -156,10 +156,10 @@ export const alerts = sqliteTable(
     isRead: integer('is_read', { mode: 'boolean' }).notNull().default(false),
     createdAt: text('created_at').notNull(),
   },
-  (table) => ({
-    userIdIdx: index('alerts_user_id_idx').on(table.userId),
-    userIdReadIdx: index('alerts_user_read_idx').on(table.userId, table.isRead),
-  }),
+  (table) => [
+    index('alerts_user_id_idx').on(table.userId),
+    index('alerts_user_read_idx').on(table.userId, table.isRead),
+  ],
 );
 
 export const devicePushTokens = sqliteTable(
@@ -174,8 +174,8 @@ export const devicePushTokens = sqliteTable(
     createdAt: text('created_at').notNull(),
     updatedAt: text('updated_at').notNull(),
   },
-  (table) => ({
-    tokenIdx: uniqueIndex('device_push_tokens_token_idx').on(table.token),
-    userIdIdx: index('device_push_tokens_user_id_idx').on(table.userId),
-  }),
+  (table) => [
+    uniqueIndex('device_push_tokens_token_idx').on(table.token),
+    index('device_push_tokens_user_id_idx').on(table.userId),
+  ],
 );

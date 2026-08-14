@@ -642,7 +642,7 @@ async function handleSendOtp(request: Request, db: ReturnType<typeof drizzle>, e
     );
 
   const code =
-    env.EXPOSE_OTP === 'true' ? (env.OTP_CODE ?? createOtpCode()) : createOtpCode();
+    env.SMS_PROVIDER === 'log' && env.OTP_CODE ? env.OTP_CODE : createOtpCode();
 
   await db.insert(otpCodes).values({
     id: createId('otp'),
