@@ -393,6 +393,39 @@ describe('push tokens', () => {
   });
 });
 
+describe('uploads', () => {
+  it('rejects non-image files', async () => {
+    const tokens = await registerAndLogin('99223344');
+
+    const form = new FormData();
+    form.append('file', new File(['hello'], 'note.txt', { type: 'text/plain' }));
+    const res = await api('/api/uploads', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${tokens.accessToken}` },
+      body: form,
+    });
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe('INVALID_FILE_TYPE');
+  });
+
+  it('rejects files larger than 5MB', async () => {
+    const tokens = await registerAndLogin('99224455');
+
+    const form = new FormData();
+    form.append(
+      'file',
+      new File([new Uint8Array(6 * 1024 * 1024)], 'big.jpg', { type: 'image/jpeg' }),
+    );
+    const res = await api('/api/uploads', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${tokens.accessToken}` },
+      body: form,
+    });
+    expect(res.status).toBe(413);
+    expect(res.body.code).toBe('FILE_TOO_LARGE');
+  });
+});
+
 describe('admin', () => {
   it('rejects non-admin users', async () => {
     const tokens = await registerAndLogin('99145566');

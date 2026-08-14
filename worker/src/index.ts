@@ -1,6 +1,6 @@
 /// <reference types="@cloudflare/workers-types" />
 
-import { and, count, desc, eq, inArray, isNotNull, isNull, like, lt, ne, or } from 'drizzle-orm';
+import { and, count, desc, eq, inArray, isNotNull, isNull, like, lt, ne, or, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 import { z } from 'zod';
 import {
@@ -9,6 +9,7 @@ import {
   livestock,
   otpCodes,
   refreshSessions,
+  rfidReaders,
   rfidScans,
   rfidTags,
   users,
@@ -39,6 +40,8 @@ type TokenPayload = {
 
 const OTP_RESEND_COOLDOWN_MS = 60_000;
 const OTP_MAX_ATTEMPTS = 5;
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+const RECENT_SCANS_LIMIT = 50;
 
 const jsonHeaders = {
   'Access-Control-Allow-Headers': 'Authorization, Content-Type',
@@ -81,6 +84,21 @@ const livestockInputSchema = z.object({
 const pushTokenSchema = z.object({
   token: z.string().min(1),
   platform: z.enum(['android', 'ios', 'web']),
+});
+
+const registerReaderSchema = z.object({
+  id: z.string().trim().min(1),
+  name: z.string().trim().min(1),
+});
+
+const scanInputSchema = z.object({
+  epc: z.string().trim().min(1),
+  direction: z.enum(['ENTER', 'EXIT', 'UNKNOWN']).optional(),
+  readerId: z.string().trim().optional(),
+});
+
+const ingestScansSchema = z.object({
+  scans: z.array(scanInputSchema).min(1),
 });
 
 class ApiFailure extends Error {
@@ -206,7 +224,17 @@ async function sha256(value: string) {
 }
 
 function accessTokenSecret(env: Env) {
-  return env.ACCESS_TOKEN_SECRET ?? 'replace-this-secret-before-production';
+  const secret = env.ACCESS_TOKEN_SECRET;
+
+  if (!secret || secret === 'replace-this-secret-before-production' || secret.length < 32) {
+    throw new ApiFailure(
+      500,
+      'ACCESS_TOKEN_SECRET тохируулаагүй байна.',
+      'ACCESS_TOKEN_SECRET_NOT_CONFIGURED',
+    );
+  }
+
+  return secret;
 }
 
 function formatMongolianPhoneNumber(phoneNumber: string) {
@@ -615,7 +643,8 @@ async function handleSendOtp(request: Request, db: ReturnType<typeof drizzle>, e
       ),
     );
 
-  const code = env.OTP_CODE ?? createOtpCode();
+  const code =
+    env.EXPOSE_OTP === 'true' ? (env.OTP_CODE ?? createOtpCode()) : createOtpCode();
 
   await db.insert(otpCodes).values({
     id: createId('otp'),
@@ -664,13 +693,14 @@ async function handleVerifyOtp(request: Request, db: ReturnType<typeof drizzle>,
         .update(otpCodes)
         .set({ attemptCount: attempts, consumedAt: now() })
         .where(eq(otpCodes.id, otp.id));
-    } else {
-      await db
-        .update(otpCodes)
-        .set({ attemptCount: attempts })
-        .where(eq(otpCodes.id, otp.id));
+      throw new ApiFailure(
+        429,
+        'Оролдлогын хязгаар давсан тул код хүчингүй боллоо. Дахин код авах шаардлагатай.',
+        'OTP_TOO_MANY_ATTEMPTS',
+      );
     }
 
+    await db.update(otpCodes).set({ attemptCount: attempts }).where(eq(otpCodes.id, otp.id));
     throw new ApiFailure(400, 'Баталгаажуулах код буруу байна.');
   }
 
@@ -1039,6 +1069,129 @@ async function handleLivestockScans(
   );
 }
 
+async function handleRegisterReader(
+  request: Request,
+  db: ReturnType<typeof drizzle>,
+  userId: string,
+) {
+  const input = await parseJson(request, registerReaderSchema);
+  const timestamp = now();
+  const readerId = input.id.trim();
+  const readerName = input.name.trim();
+
+  const existing = await db.select().from(rfidReaders).where(eq(rfidReaders.id, readerId)).get();
+
+  if (existing && existing.userId !== userId) {
+    throw new ApiFailure(409, 'Энэ уншигч бүртгэгдсэн байна.', 'READER_ALREADY_REGISTERED');
+  }
+
+  if (existing) {
+    await db
+      .update(rfidReaders)
+      .set({ name: readerName, updatedAt: timestamp })
+      .where(eq(rfidReaders.id, readerId));
+  } else {
+    await db.insert(rfidReaders).values({
+      id: readerId,
+      userId,
+      name: readerName,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    });
+  }
+
+  return apiResponse({ id: readerId, name: readerName });
+}
+
+async function handleIngestScans(
+  request: Request,
+  db: ReturnType<typeof drizzle>,
+  userId: string,
+) {
+  const input = await parseJson(request, ingestScansSchema);
+  const lowerEpcs = [...new Set(input.scans.map((scan) => scan.epc.toLowerCase()))];
+
+  const tags = await db
+    .select()
+    .from(rfidTags)
+    .where(and(eq(rfidTags.userId, userId), inArray(sql`lower(${rfidTags.epc})`, lowerEpcs)))
+    .all();
+
+  const tagByLowerEpc = new Map(tags.map((tag) => [tag.epc.toLowerCase(), tag]));
+  const baseTime = Date.now();
+  let known = 0;
+  let unknown = 0;
+  const unknownEpcs: string[] = [];
+
+  for (let i = 0; i < input.scans.length; i += 1) {
+    const scan = input.scans[i];
+    const tag = tagByLowerEpc.get(scan.epc.toLowerCase());
+
+    await db.insert(rfidScans).values({
+      id: createId('scan'),
+      userId,
+      livestockId: tag?.livestockId ?? null,
+      readerId: scan.readerId || null,
+      epc: scan.epc,
+      direction: scan.direction ?? 'UNKNOWN',
+      scannedAt: new Date(baseTime + i).toISOString(),
+    });
+
+    if (tag) {
+      known += 1;
+    } else {
+      unknown += 1;
+      if (!unknownEpcs.includes(scan.epc)) {
+        unknownEpcs.push(scan.epc);
+      }
+    }
+  }
+
+  return apiResponse({
+    accepted: input.scans.length,
+    known,
+    unknown,
+    unknownEpcs,
+  });
+}
+
+async function handleListScans(db: ReturnType<typeof drizzle>, userId: string) {
+  const rows = await db
+    .select({
+      id: rfidScans.id,
+      epc: rfidScans.epc,
+      direction: rfidScans.direction,
+      scannedAt: rfidScans.scannedAt,
+      readerId: rfidScans.readerId,
+      livestockId: rfidScans.livestockId,
+      earNumber: livestock.earNumber,
+      name: livestock.name,
+    })
+    .from(rfidScans)
+    .leftJoin(livestock, eq(livestock.id, rfidScans.livestockId))
+    .where(eq(rfidScans.userId, userId))
+    .orderBy(desc(rfidScans.scannedAt))
+    .limit(RECENT_SCANS_LIMIT)
+    .all();
+
+  return apiResponse(
+    rows.map((scan) => ({
+      id: scan.id,
+      epc: scan.epc,
+      direction: scan.direction,
+      scannedAt: scan.scannedAt,
+      reader: scan.readerId ? { id: scan.readerId, name: 'RFID уншигч' } : null,
+      livestock: scan.livestockId
+        ? {
+            id: scan.livestockId,
+            earNumber: scan.earNumber,
+            name: scan.name ?? undefined,
+          }
+        : null,
+    })),
+  );
+}
+
 async function handleListAlerts(db: ReturnType<typeof drizzle>, userId: string) {
   const rows = await db
     .select({
@@ -1256,9 +1409,17 @@ async function handleUpload(request: Request) {
     throw new ApiFailure(400, 'Зураг олдсонгүй.', 'BAD_REQUEST');
   }
 
+  if (!file.type || !file.type.startsWith('image/')) {
+    throw new ApiFailure(400, 'Зөвхөн зураг файл илгээх боломжтой.', 'INVALID_FILE_TYPE');
+  }
+
+  if (file.size > MAX_UPLOAD_BYTES) {
+    throw new ApiFailure(413, 'Зургийн хэмжээ 5MB-с ихгүй байна.', 'FILE_TOO_LARGE');
+  }
+
   const bytes = new Uint8Array(await file.arrayBuffer());
   return apiResponse({
-    url: `data:${file.type || 'image/jpeg'};base64,${base64FromBytes(bytes)}`,
+    url: `data:${file.type};base64,${base64FromBytes(bytes)}`,
   });
 }
 
@@ -1323,6 +1484,18 @@ async function route(request: Request, env: Env, ctx: ExecutionContext) {
 
   if (request.method === 'POST' && path === '/api/devices/push-token') {
     return handlePushToken(request, db, user.id);
+  }
+
+  if (request.method === 'POST' && path === '/api/devices/readers') {
+    return handleRegisterReader(request, db, user.id);
+  }
+
+  if (request.method === 'POST' && path === '/api/scans') {
+    return handleIngestScans(request, db, user.id);
+  }
+
+  if (request.method === 'GET' && path === '/api/scans') {
+    return handleListScans(db, user.id);
   }
 
   if (request.method === 'POST' && path === '/api/uploads') {
